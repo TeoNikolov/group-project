@@ -15,4 +15,4 @@ Method calls are achieved the following way:
 CUSTOM JAVA CLASSES
 ===================
 
-Put all compiled java ".class" files inside the "classes" folder. Then, you can import them with no problem in any ".jsp" file. Use your brand new class with ease just like you would in normal Java!
+Put all compiled java ".class" files inside the "WEB-INF/classes" folder. Then, you can import them with no problem in any ".jsp" file. Use your brand new class with ease just like you would in normal Java!
