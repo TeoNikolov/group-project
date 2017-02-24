@@ -17,6 +17,23 @@ function doClick() {
 	return false;
 }
 
+
+function submitForm() {
+	$.ajax({
+		type: "POST",
+		url: "ExamplePage.jsp",
+		data: {uinput : document.getElementById('txtinput').value},
+		error: function(){
+			alert("ERROR: Did not make the call!");
+	    	},
+		success: function(response){
+			$('#number').html(response);
+	    	}
+	});
+	
+	return false;	
+}
+
 function switchFunc() {
 	if (!auto) {
 		doClick();
