@@ -1,7 +1,9 @@
 package compass.utilities;
 
+import compass.CompassProperties.PropertyType;
 import compass.Constants;
-import compass.Main;
+import compass.exceptions.NoPropertyException;
+import compass.exceptions.PropertyNotFoundException;
 import tk.plogitech.darksky.forecast.*;
 import tk.plogitech.darksky.forecast.ForecastRequestBuilder.Block;
 import tk.plogitech.darksky.forecast.ForecastRequestBuilder.Units;
@@ -13,12 +15,9 @@ class Collector {
 
     // Obtain weather data from Dark Sky services
     // 'args' currently has no usage. Can be useful to select what data is needed (hourly or not, daily or not, etc.)
-    public static String collectWeatherData(String[] args) {
-        System.out.println(Constants.props.getWeatherAPIKey());
-
-
+    public static String collectWeatherData(String[] args) throws PropertyNotFoundException, NoPropertyException {
         ForecastRequest request = new ForecastRequestBuilder()
-                .key(new APIKey(Constants.props.getWeatherAPIKey()))
+                .key(new APIKey(Constants.props.getPropertyValue(PropertyType.WeatherAPIKey)))
                 .location(new GeoCoordinates(new Longitude(Constants.cardiffLongitude), new Latitude(Constants.cardiffLatitude)))
                 .exclude(Block.flags,
                         Block.alerts,

@@ -11,11 +11,12 @@ public class APIInterface {
         JSONParser parser = new JSONParser();
         Object obj;
 
-
         // Try getting weather information from Weather API
         try {
             obj = parser.parse(Collector.collectWeatherData(null)); // Some arguments for collecting weather info (JSON)
-            if (obj == null)
+            if (obj == null) // Make sure our collected data is not null (due to any issues)
+                return "";
+            if (obj.equals("")) // Make sure our data is not empty before proceeding
                 return "";
         } catch (Exception e) {
             e.printStackTrace();
@@ -24,7 +25,7 @@ public class APIInterface {
 
         JSONObject jsonObject = (JSONObject) obj;
 
-        System.out.println(jsonObject);
+        System.out.println("Weather Data:\n" + jsonObject);
 
         // If database needs to be updated, put relevant code here
         boolean DBNeedsUpdating = true;
