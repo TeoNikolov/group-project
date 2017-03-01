@@ -1,0 +1,1 @@
+Do not add "config.propeties" to git. This file contains sensitive information such as private API keys, which must not be available to the public.
