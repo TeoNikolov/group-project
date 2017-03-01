@@ -1,5 +1,3 @@
-This project is currently a Work-In-Progress
-
 #IMPORTANT
 
 The currently used API uses API Keys as form of authentication. These keys are private and you would need to create your own account with a private key from https://darksky.net/dev/.
