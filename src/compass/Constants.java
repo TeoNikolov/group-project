@@ -13,6 +13,5 @@ public class Constants {
 
     // Properties
     public static CompassProperties props;
-    public static boolean propertiesLoaded = false;
     public static String propWeatherAPIKey = "weatherAPIKey";
 }
