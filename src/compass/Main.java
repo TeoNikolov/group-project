@@ -6,7 +6,7 @@ import compass.utilities.APIInterface;
 public class Main {
     private static boolean propertiesLoaded = false;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         // Try setting up properties
         try {
             CompassProperties tempprops = new CompassProperties();
@@ -19,7 +19,22 @@ public class Main {
 
         if (propertiesLoaded) {
             // Properties have successfully been loaded
-            APIInterface.getWeather(null); // <- This method will get the weather from Dark Sky weather API
+            
+        	//Gets weather
+        	APIInterface.getAPI("Weather", "London");
+        	
+        	//Gets transport for Cardiff
+        	APIInterface.getAPI("Transport", "Cardiff");
+        	
+        	//Gets transport for Cardiff to London (currently not working
+        	//APIInterface.getAPI("Transport", "Cardiff-London");
+        	
+        	//Accesses DBPedia
+        	APIInterface.getAPI("General", "Cardiff Castle");
+        	
+        	//Accesses DBPedia
+        	APIInterface.getAPI("General", "Cathays");
+        	
         }
     }
 }
