@@ -1,42 +1,61 @@
 package compass.utilities;
 
+import java.io.IOException;
+
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
+import compass.exceptions.NoPropertyException;
+import compass.exceptions.PropertyNotFoundException;
+import us.monoid.json.JSONException;
+import us.monoid.web.Resty;
 
 public class APIInterface {
 
-    // Returns formatted weather data (in HTML)
-    // Pass it relevant input (will need to be processed by NLP first)
-    public static String getWeather(JSONObject args) {
-        JSONParser parser = new JSONParser();
-        Object obj;
+	//Checks database: if data is old call API
+	public static void getAPI(String table, String name)
+			throws ParseException, PropertyNotFoundException, NoPropertyException, IOException, JSONException {
+		DBQuery dbQuery = new DBQuery(table, name);
+		if (dbQuery.needUpdating() == true) {
 
-        // Try getting weather information from Weather API
-        try {
-            obj = parser.parse(Collector.collectWeatherData(null)); // Some arguments for collecting weather info (JSON)
-            if (obj == null) // Make sure our collected data is not null (due to any issues)
-                return "";
-            if (obj.equals("")) // Make sure our data is not empty before proceeding
-                return "";
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "";
-        }
+			Object obj = getAPIObj(table, name);
+			dbQuery.updateTable(table, obj.toString(), name);
+			System.out.println(obj);
+			
+			
+		} else {
+			JSONParser jsonparser = new JSONParser();
+			JSONObject json = (JSONObject) jsonparser.parse(dbQuery.getSummary());
+			System.out.println(json);
+		}
+	}
 
-        JSONObject jsonObject = (JSONObject) obj;
+	
+	//Returns the JSON API object (information still needs to be exstapolated from json
+	public static Object getAPIObj(String table, String name) throws ParseException, PropertyNotFoundException, NoPropertyException, IOException, JSONException {
+		JSONParser parser = new JSONParser();
+		Resty r = new Resty();
+		Object obj = null;
 
-        System.out.println("Weather Data:\n" + jsonObject);
-
-        // If database needs to be updated, put relevant code here
-        boolean DBNeedsUpdating = true;
-        if (DBNeedsUpdating) {
-            String storingQuery = Storing.genWeatherQuery(null); // Some arguments for generating "storing" query (JSON)
-            Querying.sendQuery(storingQuery);
-        }
-
-        // Obtain information from database, format it and return an HTML string
-        String query = Querying.generateWeatherQuery(null); // Some arguments for generating "retrieve" query (JSON)
-        String result = Querying.sendQuery(query);
-        return HTMLFormatter.formatWeather(jsonObject); // Return the formatted HTML data
-    }
+		switch (table) {
+		case "Weather":
+			obj = parser.parse(Collector.collectWeatherData(null));
+			break;
+		case "Transport":
+			//General travel information about singular location
+			if(!name.contains("-")) { //NEED TO DYNAMICALLY CHANGE LAT AND LONG COORDS OTHERWISE WILL ALWAYS BE CARDIFF	
+				obj = r.text("https://transportapi.com/v3/uk/places.json?app_id=221cce2f&app_key=d209929236fc97196775650c2bdb639e&lat=51.481583&lon=-3.179090&query=Yeovil&type=bus_stop,train_station")
+						.toString();	
+			} else {
+			//General travel information from one destination to another
+				String[] fromLocTo = name.split("-");
+				obj = r.text("http://transportapi.com/uk/public/journey/from/cardiff/to/london.json").toString();		
+			}
+			break;
+		default:
+			obj = r.json("http://lookup.dbpedia.org/api/search.asmx/KeywordSearch?QueryString=" + name.replace(" ", "+")).object();
+		}
+		return obj;
+	}
 }
