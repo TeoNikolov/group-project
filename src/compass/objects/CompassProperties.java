@@ -1,10 +1,11 @@
-package compass;
+package compass.objects;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+import compass.Constants;
 import compass.exceptions.NoPropertyException;
 import compass.exceptions.PropertiesNotLoadedException;
 import compass.exceptions.PropertyNotFoundException;
@@ -23,7 +24,7 @@ public class CompassProperties {
         return hasCompleted;
     }
 
-    CompassProperties() throws PropertiesNotLoadedException {
+    public CompassProperties() throws PropertiesNotLoadedException {
         loadProperties();
         if (prop != null)
             hasCompleted = true;
