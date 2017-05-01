@@ -1,8 +1,6 @@
 package compass.objects;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.Properties;
 
 import compass.Constants;
@@ -32,29 +30,25 @@ public class CompassProperties {
 
     // Function loads the properties file with location indicated by Constants 'propFileName'
     private void loadProperties() throws PropertiesNotLoadedException {
-        InputStream inputStream;
-
         prop = new Properties();
-        inputStream = getClass().getClassLoader().getResourceAsStream(Constants.propFileName);
+        FileReader reader = null;
 
         try {
-            if (inputStream != null) {
-                prop.load(inputStream);
-            } else {
-                throw new FileNotFoundException("property file '" + Constants.propFileName +
-                        "' not found in the classpath.");
-            }
+            File propertiesFile = new File(Constants.basePath + Constants.propFileName);
+            reader = new FileReader(propertiesFile);
+            prop.load(reader);
         } catch (IOException e) {
             prop = null;
             e.printStackTrace();
             throw new PropertiesNotLoadedException();
         } finally {
-            if (inputStream != null)
+            if (reader != null) {
                 try {
-                    inputStream.close();
+                    reader.close();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+            }
         }
     }
 

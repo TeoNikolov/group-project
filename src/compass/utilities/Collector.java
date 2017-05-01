@@ -16,7 +16,7 @@ class Collector {
 
     // Obtain weather data from Dark Sky services
     // 'args' currently has no usage. Can be useful to select what data is needed (hourly or not, daily or not, etc.)
-    public static String collectWeatherData(String[] args) throws PropertyNotFoundException, NoPropertyException {
+    public static String collectWeatherData() throws PropertyNotFoundException, NoPropertyException {
         ForecastRequest request = new ForecastRequestBuilder()
                 .key(new APIKey(Constants.props.getPropertyValue(PropertyType.WeatherAPIKey)))
                 .location(new GeoCoordinates(new Longitude(Constants.cardiffLongitude), new Latitude(Constants.cardiffLatitude)))

@@ -1,48 +1,38 @@
 package compass;
 
 import compass.exceptions.PropertiesNotLoadedException;
-import compass.exceptions.PropertyNotFoundException;
 import compass.objects.CompassProperties;
-import compass.utilities.APIInterface;
 import compass.utilities.NLP;
 
 public class Main {
     private static boolean propertiesLoaded = false;
 
     public static void main(String[] args) {
-        NLP.loadStopwords();
+        String lol = "This method will not be used ever in its entire life." +
+                "It's here just to please MANIFEST.MF" +
+                "May fix it soon";
+    }
+
+    public static String parseUserQuery(String input) {
         NLP.loadIdentifiers();
+        NLP.loadStopwords();
+
+        String res = "There was an error on the server and your input could not be parsed.";
 
         // Try setting up properties
         try {
             CompassProperties tempprops = new CompassProperties();
             if (tempprops.hasCompleted())
                 Constants.props = tempprops;
-                propertiesLoaded = true;
+            propertiesLoaded = true;
         }  catch (PropertiesNotLoadedException e) {
             e.printStackTrace();
         }
 
         if (propertiesLoaded) {
-            // Properties have successfully been loaded
-            try {
-                //Gets weather
-                APIInterface.getAPI("Weather", "London");
-
-                //Gets transport for Cardiff
-                APIInterface.getAPI("Transport", "Cardiff");
-
-                //Gets transport for Cardiff to London (currently not working
-                //APIInterface.getAPI("Transport", "Cardiff-London");
-
-                //Accesses DBPedia
-                APIInterface.getAPI("General", "Cardiff Castle");
-
-                //Accesses DBPedia
-                APIInterface.getAPI("General", "Cathays");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            res = NLP.parseInput(input);
         }
+
+        return res;
     }
 }

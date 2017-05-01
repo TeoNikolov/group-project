@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+Class-Path: darksky-forecast-api-wrapper.jar stanford-corenlp-3.7.0.ja
+ r lucene-core-6.4.2.jar json-simple-1.1.1.jar mysql-connector-java-5.
+ 1.42-bin.jar resty-0.3.2.jar stanford-corenlp-3.7.0-models.jar lucene
+ -queryparser-6.4.2.jar
+Main-Class: compass.Main
+

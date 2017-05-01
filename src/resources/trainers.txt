@@ -1,22 +1,10 @@
-What is the weather?
-What is the weather at the moment?
-Is it rainy today?
-Will it be rainy today?
-Is it going to be sunny today?
-What is the current temperature?
-What is the temperature?
-Will it be warm tonight?
-What will the temperature be tonight?
-Will there be clouds tomorrow?
-Will it be cloudy tomorrow?
-Was it cloudy yesterday?
-What is the humidity?
-What will the humidity be in 2 hours?
-What will the humidity be in 10 hours?
-What is the current visibility?
-What is the chance of rain?
-When is it going to rain?
-Where will it rain?
 Where is Cardiff Central?
-What is Cardiff Central?
-When will there be a starfall?
+What is Cardiff Castle?
+Where is Cardiff Castle?
+When is Cardiff Castle open?
+When will Cardiff Castle open?
+Where is Pryzm?
+Where is Pryzm club?
+Where is Pryzm located?
+What is the nearest shop?
+Where is the nearest shop?

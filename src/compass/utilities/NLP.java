@@ -10,7 +10,11 @@ import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 import edu.stanford.nlp.trees.Tree;
 import edu.stanford.nlp.trees.TreeCoreAnnotations;
 import edu.stanford.nlp.trees.TreePrint;
+import edu.stanford.nlp.util.ArrayHeap;
 import edu.stanford.nlp.util.CoreMap;
+//import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import us.monoid.json.JSONArray;
 
 import java.io.*;
 import java.util.*;
@@ -89,35 +93,35 @@ public class NLP {
                 currentID.add();
     }
 
-    public static void main(String[] args) {
-        loadStopwords();
-        loadIdentifiers();
-//        parseInput("What is the weather today?");
-        File trainerFile = new File(Constants.basePath + Constants.questionsName);
-
-        PrintStream err = System.err;
-        System.setErr(new PrintStream(new OutputStream() {
-            public void write(int b) {
-            }
-        }));
-
-        try {
-            BufferedReader bufferedReader = new BufferedReader(new FileReader(trainerFile));
-            String line = bufferedReader.readLine();
-
-            while (line != null) {
-                System.out.println(line);
-                parseInput(line);
-                line = bufferedReader.readLine();
-            }
-
-            bufferedReader.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        System.setErr(err);
-    }
+//    public static void main(String[] args) {
+//        loadStopwords();
+//        loadIdentifiers();
+////        parseInput("What is the weather today?");
+//        File trainerFile = new File(Constants.basePath + Constants.questionsName);
+//
+//        PrintStream err = System.err;
+//        System.setErr(new PrintStream(new OutputStream() {
+//            public void write(int b) {
+//            }
+//        }));
+//
+//        try {
+//            BufferedReader bufferedReader = new BufferedReader(new FileReader(trainerFile));
+//            String line = bufferedReader.readLine();
+//
+//            while (line != null) {
+//                System.out.println(line);
+//                parseInput(line);
+//                line = bufferedReader.readLine();
+//            }
+//
+//            bufferedReader.close();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//
+//        System.setErr(err);
+//    }
 
     /**
      * Primary method responsible for parsing the input and outputting the result of the input in
@@ -127,15 +131,6 @@ public class NLP {
      * @return the output passed back to the client in HTML format
      */
     public static String parseInput(String input) {
-//        loadStopwords();
-//        loadIdentifiers();
-
-//        if (Constants.debug) {
-//            for (Identifier id : Identifier.identifiers) {
-//                System.out.println(id + "\n");
-//            }
-//        }
-
         Properties props = new Properties();
 
         if (Constants.debug) {
@@ -145,28 +140,19 @@ public class NLP {
         }
 
         StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
-
         Annotation annotation = new Annotation(input);
         pipeline.annotate(annotation);
-
         List<CoreMap> sentences = annotation.get(CoreAnnotations.SentencesAnnotation.class);
-
         ArrayList<CompassToken> tokens = new ArrayList<>();
-        String response = "";
-
-        if (Constants.debug)
-            response = "This is your input broken down into tokens and assigned Part-of-Speech tags...<br>";
 
         for (CoreMap sentence : sentences) {
             for (CoreLabel token : sentence.get(CoreAnnotations.TokensAnnotation.class)) {
-                boolean isStopWord = false;
                 String word = token.get(CoreAnnotations.TextAnnotation.class);
 
                 if (!stopwords.contains(word.toLowerCase())) {
                     String pos = token.get(CoreAnnotations.PartOfSpeechAnnotation.class);
                     String ne = token.get(CoreAnnotations.NamedEntityTagAnnotation.class);
-                    response += word + " / " + pos + " / " + ne + "<br>";
-                    tokens.add(new CompassToken(word, pos));
+                    tokens.add(new CompassToken(word, pos, ne));
 
                     if (Constants.debug) {
 //                        if (
@@ -190,16 +176,48 @@ public class NLP {
 //            }
         }
 
-        if (Constants.debug)
-            System.out.println();
+        String category = obtainCategory(tokens);
+        String response = "";
 
-        System.out.println(obtainCategory(tokens) + "\n");
+        try {
+            switch (category) {
+                case "weather":
+                    response = APIInterface.getAPI("Weather", "Cardiff");
+                    break;
+                case "transport":
+                    response = APIInterface.getAPI("Transport", "Cardiff");
+                    break;
+                case "general":
+                    response = APIInterface.getAPI("General", "Cathays", true);
+                    break;
+                case "none":
+                    response = "Sorry, we do not have an answer to your question!";
+                    break;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-        return response;
+        JSONObject resultObj = new JSONObject();
+        Collection<JSONObject> tokenList = new ArrayList<>();
+
+        for(CompassToken t : tokens) {
+            JSONObject temp = new JSONObject();
+            temp.put("NamedEntity", t.ne);
+            temp.put("PartOfSpeech", t.pos);
+            temp.put("Token", t.token);
+            tokenList.add(temp);
+        }
+
+        resultObj.put("Category", category);
+        resultObj.put("TokenInfo", new JSONArray(tokenList));
+        resultObj.put("Response", response);
+
+        return resultObj.toJSONString();
     }
 
     private static String obtainCategory(ArrayList<CompassToken> tokens) {
-        String category = "no category";
+        String category = "none";
 
         for (CompassToken token : tokens) {
             Identifier id = Identifier.getLinkIdentifier(token.token);
