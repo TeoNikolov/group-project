@@ -30,7 +30,7 @@ public class Main {
         }
 
         if (propertiesLoaded) {
-            res = NLP.parseInput(input);
+            res = NLP.parseInput(input.toLowerCase());
         }
 
         return res;
