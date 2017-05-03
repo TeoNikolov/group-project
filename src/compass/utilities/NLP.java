@@ -178,7 +178,6 @@ public class NLP {
 
         String category = obtainCategory(tokens);
         String response = "";
-
         try {
             switch (category) {
                 case "weather":
@@ -187,11 +186,14 @@ public class NLP {
                 case "transport":
                     response = APIInterface.getAPI("Transport", "Cardiff");
                     break;
-                case "general":
-                    response = APIInterface.getAPI("General", "Cathays", true);
-                    break;
+                case "events":
+                	response = APIInterface.getAPI("Events", "Cardiff");
                 case "none":
-                    response = "Sorry, we do not have an answer to your question!";
+                	//CURRENTLY COMPARING TOKENS CHANGE TO VALID STRING
+                	response = APIInterface.getAPI("General", input.replace(" ", "+"));
+                	if(response.equals("{\"results\":[]}")) {
+                		response = "Sorry, we do not have an answer to your question!";	
+                	}
                     break;
             }
         } catch (Exception e) {
