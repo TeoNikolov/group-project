@@ -33,6 +33,8 @@ public class Main {
             res = NLP.parseInput(input.toLowerCase());
         }
 
+        System.err.println(res);
+
         return res;
     }
 }

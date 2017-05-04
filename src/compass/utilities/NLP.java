@@ -93,35 +93,35 @@ public class NLP {
                 currentID.add();
     }
 
-//    public static void main(String[] args) {
-//        loadStopwords();
-//        loadIdentifiers();
-////        parseInput("What is the weather today?");
-//        File trainerFile = new File(Constants.basePath + Constants.questionsName);
-//
-//        PrintStream err = System.err;
-//        System.setErr(new PrintStream(new OutputStream() {
-//            public void write(int b) {
-//            }
-//        }));
-//
-//        try {
-//            BufferedReader bufferedReader = new BufferedReader(new FileReader(trainerFile));
-//            String line = bufferedReader.readLine();
-//
-//            while (line != null) {
-//                System.out.println(line);
-//                parseInput(line);
-//                line = bufferedReader.readLine();
-//            }
-//
-//            bufferedReader.close();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//
-//        System.setErr(err);
-//    }
+    public static void main(String[] args) {
+        loadStopwords();
+        loadIdentifiers();
+//        parseInput("What is the weather today?");
+        File trainerFile = new File(Constants.basePath + Constants.questionsName);
+
+        PrintStream err = System.err;
+        System.setErr(new PrintStream(new OutputStream() {
+            public void write(int b) {
+            }
+        }));
+
+        try {
+            BufferedReader bufferedReader = new BufferedReader(new FileReader(trainerFile));
+            String line = bufferedReader.readLine();
+
+            while (line != null) {
+                System.out.println(line);
+                parseInput(line);
+                line = bufferedReader.readLine();
+            }
+
+            bufferedReader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        System.setErr(err);
+    }
 
     /**
      * Primary method responsible for parsing the input and outputting the result of the input in
@@ -188,7 +188,15 @@ public class NLP {
                     response = APIInterface.getAPI("Transport", "Cardiff");
                     break;
                 case "general":
-                    response = APIInterface.getAPI("General", "Cathays", true);
+                    String data = "";
+
+                    for (CompassToken token : tokens) {
+                        if (token.pos.equals("NNP") || token.pos.equals("NNPS")) {
+                            data += " " + token.token;
+                        }
+                    }
+
+                    response = APIInterface.getAPI("General", data.trim(), true);
                     break;
                 case "none":
                     response = "Sorry, we do not have an answer to your question!";
@@ -224,6 +232,11 @@ public class NLP {
 
             if (id != null)
                 category = id.getCategory();
+        }
+
+        if (Constants.errdebug) {
+            System.err.println("Tokens: " + tokens);
+            System.err.println("Category derived: " + category);
         }
 
         return category;
