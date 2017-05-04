@@ -15,23 +15,19 @@ public class DBQuery {
 	String objName;
 	String surmmary;
 	Long lastUpdated;
-	Long currentTime = new Date().getTime();
 	Boolean update = false;
 
-	
 	public DBQuery(String table, String name) {
 		EstablishDBConnection(table, name);
 
-		// If the last update was more than x time update table (call API else read from table)
-		
-		//Set to update every 10 mins currently
-		if (lastUpdated == null || (currentTime - lastUpdated) > 1000000) {
+		// Is the information up to date and need updating
+		if (UpdateTimeFrame.updateTimeFrame(table.toLowerCase(), lastUpdated) == true) {
 			update = true;
 		}
 	}
 
-	//Establish connection to DB -------------------------------------------------------------
-	
+	// Establish connection to DB
+	// -------------------------------------------------------------
 	public void EstablishDBConnection(String table, String name) {
 
 		try {
@@ -64,7 +60,6 @@ public class DBQuery {
 		}
 	}
 
-
 	public void updateTable(String table, String contents, String name) {
 		try {
 			// create a java mysql database connection
@@ -73,12 +68,11 @@ public class DBQuery {
 			Class.forName(myDriver);
 			Connection conn = DriverManager.getConnection(myUrl, "group9.2016", "g4QFghm5Kxm");
 
-			
-			if(lastUpdated == null) {
-				
+			if (lastUpdated == null) {
+
 				String query = " insert into " + table + " (Name, Summary, LastUpdated)" + " values (?, ?, ?)";
-				
-				PreparedStatement preparedStmt = conn.prepareStatement(query);	
+
+				PreparedStatement preparedStmt = conn.prepareStatement(query);
 				Date lastUpdateTime = new Date();
 
 				preparedStmt.setString(1, name);
@@ -88,19 +82,19 @@ public class DBQuery {
 				// execute the java preparedstatement
 				preparedStmt.executeUpdate();
 			} else {
-				
-			String query = "UPDATE " + table + " SET Name = ?, Summary = ?, lastUpdated = ? WHERE id = ?";
-			
-			PreparedStatement preparedStmt = conn.prepareStatement(query);	
-			Date lastUpdateTime = new Date();
 
-			preparedStmt.setString(1, name);
-			preparedStmt.setString(2, contents);
-			preparedStmt.setLong(3, lastUpdateTime.getTime());
-			preparedStmt.setInt(4, id);
+				String query = "UPDATE " + table + " SET Name = ?, Summary = ?, lastUpdated = ? WHERE id = ?";
 
-			// execute the java preparedstatement
-			preparedStmt.executeUpdate();
+				PreparedStatement preparedStmt = conn.prepareStatement(query);
+				Date lastUpdateTime = new Date();
+
+				preparedStmt.setString(1, name);
+				preparedStmt.setString(2, contents);
+				preparedStmt.setLong(3, lastUpdateTime.getTime());
+				preparedStmt.setInt(4, id);
+
+				// execute the java preparedstatement
+				preparedStmt.executeUpdate();
 			}
 
 			conn.close();
@@ -110,11 +104,10 @@ public class DBQuery {
 		}
 	}
 
-	
 	public Boolean needUpdating() {
 		return update;
 	}
-	
+
 	public String getSummary() {
 		return surmmary;
 	}
