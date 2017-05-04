@@ -6,6 +6,10 @@ public class UpdateTimeFrame {
 
 	public static boolean updateTimeFrame(String catagory, Long lastUpdated) {
 
+		if (lastUpdated == null) {
+			return true;
+		}
+
 		Long currentTime = System.currentTimeMillis();
 
 		switch (catagory.toLowerCase()) {

@@ -21,12 +21,14 @@
  
 $weather
 JJ:sunny,rainy,warm,cloudy,stormy
-NN::weather,rain,cloud,storm,,temperature,humidity,
+NN::weather,rain,cloud,storm,temperature,humidity,visibility
 NNS:clouds
+IN:outside
 
-$places
-NN:market,cinema,club
+$events
+NN:event,party,concert,celebration
+NNS:events,parties,concerts,celebrations
 
 $transport
-NN:car,train,plane,airplane
-NNS:cars,trains,planes,airplanes
+NN:car,train,plane,airplane,bus,busstop,bus stop,transport
+NNS:cars,trains,planes,airplanes,buses,busstops,bus stops,

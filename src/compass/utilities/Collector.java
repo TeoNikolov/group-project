@@ -27,7 +27,7 @@ class Collector {
                         Block.hourly,
                         Block.daily
                 )
-                .units(Units.si)
+                .units(Units.uk2)
                 .language(Language.en).build();
 
         DarkSkyClient client = new DarkSkyClient();

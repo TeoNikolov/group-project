@@ -1,0 +1,32 @@
+# This file constitutes a list of relevant categories and metadata associated with them (words)
+# Whitespace and hashtags '#' in 0th index are ignored during parsing
+#
+# To populate a category, a name, subctegory name and links to that subcategory must be included.
+#
+#
+# Structure:
+#
+# $<category name>
+# <subcategory_1>:<link_1 , link_2 , ... , link_n>
+# <subcategory_2>:<link_1 , link_2 , ... , link_n>
+# <...>
+# <subcategory_n>:<link_1 , link_2 , ... , link_n>
+# 
+# Example:
+#
+# $weather
+# NN:weather, rain, cloud, storm
+# JJ: rainy, cloudy, stormy
+#
+ 
+$weather
+JJ:sunny,rainy,warm,cloudy,stormy
+NN::weather,rain,cloud,storm,,temperature,humidity,
+NNS:clouds
+
+$places
+NN:market,cinema,club
+
+$transport
+NN:car,train,plane,airplane
+NNS:cars,trains,planes,airplanes

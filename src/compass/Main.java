@@ -11,6 +11,8 @@ public class Main {
         String lol = "This method will not be used ever in its entire life." +
                 "It's here just to please MANIFEST.MF" +
                 "May fix it soon";
+
+        parseUserQuery("What is the nearest train station?");
     }
 
     public static String parseUserQuery(String input) {
@@ -30,7 +32,7 @@ public class Main {
         }
 
         if (propertiesLoaded) {
-            res = NLP.parseInput(input.toLowerCase());
+            res = NLP.parseInput(input);
         }
 
         System.err.println(res);

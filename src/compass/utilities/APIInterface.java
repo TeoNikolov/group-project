@@ -24,7 +24,7 @@ public class APIInterface {
 			throws ParseException, PropertyNotFoundException, NoPropertyException, IOException, JSONException {
 		DBQuery dbQuery = new DBQuery(table, name);
 
-		if (!forceAPIPull && dbQuery.needUpdating()) {
+		if (dbQuery.needUpdating()) {
 			Object obj = getAPIObj(table, name);
 			dbQuery.updateTable(table, obj.toString(), name);
 			return obj.toString();
@@ -35,7 +35,6 @@ public class APIInterface {
 		}
 	}
 
-	
 	//Returns the JSON API object (information still needs to be extrapolated from json
 	public static String getAPIObj(String table, String name) throws ParseException, PropertyNotFoundException, NoPropertyException, IOException, JSONException {
 		JSONParser parser = new JSONParser();

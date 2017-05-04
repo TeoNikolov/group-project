@@ -7,24 +7,34 @@
 <!-- Custom Theme files -->
 <link href="css/styleResults.css" rel="stylesheet" type="text/css" media="all"/>
 <link href="https://fonts.googleapis.com/css?family=Abel" rel="stylesheet">
-    <link href="css/bootstrap.min.css" rel="stylesheet">
+<!--     <link href="css/bootstrap.min.css" rel="stylesheet">
+ -->
 
+<script type="text/php">
+ <?php
+$servername = "csmysql.cs.cf.ac.uk";
+$username = "group9.2016";
+$password = "g4QFghm5Kxm";
+$dbname = "group9_2016";
+
+// Create connection
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+} 
+echo '<div class="resultDesc">'
+echo  '<h1 class="textOrange"><u>test</u></h1>'
+echo  '<h2>Tuesday, 21st March 2017<h2>'
+echo  '<p id="description_php">' echo "Connected successfully";
+echo '</p>'
+echo  '</div>'
+
+?>
+</script>
 </head>
 <body>
-<!-- 	<!-- information -->
-<!--   <header>
-	<div class="topbar"></div>
-	<div class="bottombar"></div>
 
-    <div class="topdiv">
-      <ul>
-        <li></li>
-        <li>
-
-		</li>
-      </ul>
-    </div>
-  </header> -->
 <div class="container">
 	<div class="topbar"></div>
 	<div class="bottombar"></div>
@@ -39,6 +49,13 @@
 		</form>
   </div>
 </div>
+
+<div class="resultDesc">
+  <h1 class="textOrange"><u>test</u></h1>
+  <h2>Tuesday, 21st March 2017<h2>
+  <p id="description_php"></p> 
+  </div>
+
 
 </body>
 </html>

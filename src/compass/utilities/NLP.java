@@ -14,6 +14,7 @@ import edu.stanford.nlp.util.ArrayHeap;
 import edu.stanford.nlp.util.CoreMap;
 //import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import us.monoid.json.JSONArray;
 
 import java.io.*;
@@ -34,7 +35,10 @@ public class NLP {
             String line = bufferedReader.readLine();
 
             while (line != null) {
-                stopwords.add(line.toLowerCase());
+                String[] words = line.toLowerCase().split(",");
+                for (String word : words) {
+                    stopwords.add(word.trim());
+                }
                 line = bufferedReader.readLine();
             }
 
@@ -96,6 +100,7 @@ public class NLP {
     public static void main(String[] args) {
         loadStopwords();
         loadIdentifiers();
+
 //        parseInput("What is the weather today?");
         File trainerFile = new File(Constants.basePath + Constants.questionsName);
 
@@ -132,6 +137,7 @@ public class NLP {
      */
     public static String parseInput(String input) {
         Properties props = new Properties();
+        Boolean requiresProcessing = true;
 
         if (Constants.debug) {
             props.setProperty("annotators", "tokenize, ssplit, pos, lemma, ner, parse");
@@ -143,18 +149,22 @@ public class NLP {
         Annotation annotation = new Annotation(input);
         pipeline.annotate(annotation);
         List<CoreMap> sentences = annotation.get(CoreAnnotations.SentencesAnnotation.class);
+        ArrayList<CompassToken> filteredTokens = new ArrayList<>();
         ArrayList<CompassToken> tokens = new ArrayList<>();
 
         for (CoreMap sentence : sentences) {
             for (CoreLabel token : sentence.get(CoreAnnotations.TokensAnnotation.class)) {
                 String word = token.get(CoreAnnotations.TextAnnotation.class);
+                String pos = token.get(CoreAnnotations.PartOfSpeechAnnotation.class);
+                String ne = token.get(CoreAnnotations.NamedEntityTagAnnotation.class);
+
+                tokens.add(new CompassToken(word, pos, ne));
 
                 if (!stopwords.contains(word.toLowerCase())) {
-                    String pos = token.get(CoreAnnotations.PartOfSpeechAnnotation.class);
-                    String ne = token.get(CoreAnnotations.NamedEntityTagAnnotation.class);
-                    tokens.add(new CompassToken(word, pos, ne));
+                    filteredTokens.add(new CompassToken(word, pos, ne));
+                }
 
-                    if (Constants.debug) {
+                if (Constants.debug) {
 //                        if (
 //                                pos.equals("NN") ||
 //                                        pos.equals("NNS") ||
@@ -163,9 +173,8 @@ public class NLP {
 //                                        pos.equals("WRB") ||
 //                                        pos.equals("WP") ||
 //                                        pos.equals("JJ")) {
-                            System.out.println(word + " / " + pos + " / " + ne);
+                        System.out.println(word + " / " + pos + " / " + ne);
 //                        }
-                    }
                 }
             }
 
@@ -176,30 +185,96 @@ public class NLP {
 //            }
         }
 
-        String category = obtainCategory(tokens);
+        String category = obtainCategory(filteredTokens);
         String response = "";
+        String data = "";
+
+        for (CompassToken token : filteredTokens) {
+            if (token.pos.equals("NNP") ||
+                    token.pos.equals("NNPS") ||
+                    token.pos.equals("JJ") ||
+                    token.pos.equals("JJS") ||
+                    token.pos.equals("NN") ||
+                    token.pos.equals("NNS")) {
+                data += " " + token.token;
+            }
+        }
+
+        data = data.trim().replace(" ", "").toLowerCase();
 
         try {
             switch (category) {
                 case "weather":
                     response = APIInterface.getAPI("Weather", "Cardiff");
+                    JSONParser parser = new JSONParser();
+
+                    try {
+                        JSONObject robj = (JSONObject) parser.parse(response);
+                        JSONObject rcurrently = (JSONObject) robj.get("currently");
+                        Object rinfo = rcurrently.get(data);
+
+                        if (rinfo != null) {
+                            String metric = "";
+
+                            switch(data) {
+                                case("visibility"):
+                                    metric = "m";
+                                    break;
+                                case("humidity"):
+                                    metric = "%";
+                                    break;
+                                case("pressure"):
+                                    metric = "mb";
+                                    break;
+                                case("temperature"):
+                                    metric = "°";
+                                    break;
+                            }
+
+                            response = "The " + data + " is currently " + rinfo + metric + ".";
+                            requiresProcessing = false;
+                        }
+                    } catch (NullPointerException e) {
+                        e.printStackTrace();
+                    }
                     break;
                 case "transport":
                     response = APIInterface.getAPI("Transport", "Cardiff");
-                    break;
-                case "general":
-                    String data = "";
+                    parser = new JSONParser();
 
-                    for (CompassToken token : tokens) {
-                        if (token.pos.equals("NNP") || token.pos.equals("NNPS")) {
-                            data += " " + token.token;
+                    try {
+                        JSONObject robj = (JSONObject) parser.parse(response);
+                        org.json.simple.JSONArray rmember = (org.json.simple.JSONArray) robj.get("member");
+                        JSONObject rstation = (JSONObject) rmember.get(0);
+
+
+                        if (data.contains("nearest") || data.contains("distance")) {
+                            response = "Station " + rstation.get("name") + " is " + rstation.get("distance") +
+                                    "m away from you.";
+                            requiresProcessing = false;
                         }
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
 
-                    response = APIInterface.getAPI("General", data.trim(), true);
                     break;
-                case "none":
-                    response = "Sorry, we do not have an answer to your question!";
+                case "general":
+                    if (Constants.errdebug) {
+                        System.err.println("General Data: " + data.trim());
+                    }
+
+                    try {
+                        response = APIInterface.getAPI("General", data.trim(), true);
+                        parser = new JSONParser();
+                        JSONObject robj = (JSONObject) parser.parse(response);
+
+                        if (((org.json.simple.JSONArray) robj.get("results")).size() == 0) {
+                            category = "none";
+                        }
+                    } catch (NullPointerException e) {
+                        e.printStackTrace();
+                    }
+
                     break;
             }
         } catch (Exception e) {
@@ -219,16 +294,22 @@ public class NLP {
 
         resultObj.put("Category", category);
         resultObj.put("TokenInfo", new JSONArray(tokenList));
-        resultObj.put("Response", response);
+        if (requiresProcessing) {
+            resultObj.put("Response", response);
+        } else {
+            JSONObject rtext = new JSONObject();
+            rtext.put("Text", response);
+            resultObj.put("Response", rtext);
+        }
 
         return resultObj.toJSONString();
     }
 
     private static String obtainCategory(ArrayList<CompassToken> tokens) {
-        String category = "none";
+        String category = "general";
 
         for (CompassToken token : tokens) {
-            Identifier id = Identifier.getLinkIdentifier(token.token);
+            Identifier id = Identifier.getLinkIdentifier(token.token.toLowerCase());
 
             if (id != null)
                 category = id.getCategory();

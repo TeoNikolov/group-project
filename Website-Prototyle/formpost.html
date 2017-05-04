@@ -1,0 +1,31 @@
+<html>
+<head>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script>
+function submitFeedback(str)
+{
+    $.ajax({
+                type: "POST",
+                url: "postexample.php",
+                data: {
+                    query: "Query",
+                    feedback: str
+                }
+            }).done(function (msg) {
+                alert("Your feedback has been recorded");
+            });
+}
+</script>
+
+</head>
+<body>
+
+<div id="products"> </div>
+
+<h1>Was this Answer helpful?</h1>
+<button type="submit" value="Yes" name="theresult" onclick="submitFeedback('Yes')">Yes</button>
+<button type="submit" value="No" name="theresult" onclick="submitFeedback('No')">No</button>
+
+</body>
+</html>

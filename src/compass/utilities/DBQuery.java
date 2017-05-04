@@ -40,6 +40,8 @@ public class DBQuery {
 			// our SQL SELECT query.
 			String query = "SELECT * FROM " + table + " WHERE name = '" + name + "'";
 
+			System.out.println("Table: " + table + " | Name: " + name);
+
 			// create the java statement
 			Statement st = conn.createStatement();
 
