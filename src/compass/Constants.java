@@ -33,4 +33,10 @@ public class Constants {
     public static CompassProperties props;
     public static String propWeatherAPIKey = "weatherAPIKey";
 
+    
+    //Update times
+    public static long weatherUpdateTime = 3600000;		//60 minutes
+    public static long transportUpdateTime = 3600000;	//60 minutes
+    public static long eventsUpdateTime = 3600000;		//60 minutes
+    public static long generalUpdateTime = 86400000;	//24 hours
 }

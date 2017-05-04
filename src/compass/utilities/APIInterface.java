@@ -47,25 +47,16 @@ public class APIInterface {
                 obj = parser.parse(Collector.collectWeatherData());
                 break;
             case "Transport":
-                //General travel information about singular location
-                if(!name.contains("-")) { //NEED TO DYNAMICALLY CHANGE LAT AND LONG COORDS OTHERWISE WILL ALWAYS BE CARDIFF
-                    obj = r.json("https://transportapi.com/v3/uk/places.json?app_id=221cce2f&app_key=d209929236fc97196775650c2bdb639e&lat=51.481583&lon=-3.179090&query=Cardiff&type=bus_stop,train_station")
-                            .toString();
-                    break;
-                } else {
-                //General travel information from one destination to another
-                    String[] loc = name.split("-");
-                    obj = r.json("https://transportapi.com/v3/uk/public/journey/from/" + loc[0] + "/to/"+loc[1] + ".json?app_id=221cce2f&app_key=d209929236fc97196775650c2bdb639e&service=tfl").toString();
-                }
+                obj = TransportApi.transportQuery(name);
                 break;
             
+            //Displays events in Cardiff
             case "Events":
             	obj = r.json("http://www.skiddle.com/api/v1/events/search/?api_key=60fff357ca39f4042fa5ed49a8a2b7d3&latitude=51.4816&longitude=-3.1791&radius=1&order=distance&description=1&limit=3").toObject();
             	break;
             default:
                 obj = r.json("http://lookup.dbpedia.org/api/search.asmx/KeywordSearch?QueryString=" + name.replace(" ", "+")).object();
             }
-
 		return obj.toString();
 	}
 }
