@@ -1,17 +1,11 @@
-#IMPORTANT
+Official GitHub repository for the compass website, including back-end source code.
 
-The currently used API uses API Keys as form of authentication. These keys are private and you would need to create your own account with a private key from https://darksky.net/dev/.
+# Dependency Remarks
+Among the included dependencies within the repo, there is one extra dependency by Standford CoreNLP, which is the "models" dependency, being at about 250MB.
 
-Once you create an account, you can find the private key by going to your account/profile information.
+# Overview
+Compass is a centralized, open-domain question-answering system that we have set to be local to Cardiff. Due to DBPedia's nature, currently we include a broad domain for basic questions such as "Who is Gareth Bale?".
 
-Copy the key.
+When the program executes a user query, relevant API calls may be made and the database linked to the program updated. Therefore, it is crucial to include the details of your database before running the code.
 
-Next, make sure you have the file "template.properties" under 'src/resources'. Create a copy of the file and rename it to "config.properties" (if you have not done so already).
-
-Open the file and replace the placeholder text with your API Key.
-
--
-Make sure Git is not tracking the new "config.properties" file. It should remain private!
--
-
-As we progress, we will need to add more content. Therefore the template file will always be present to include an up-to-date structure of the properties. All that would be needed is to replace the template information with your private information whenever necessary.
+The back-end operates on Java 1.8, which is ran by a recent version of the Apache Tomcat, a web server implementing the Java Server Pages (JSP) technology. There is a level of dependency on PHP for the feedback system to work, though the majority of the program runs on Java and is handled visually primarily via Javascript and CSS, using Bootstrap for responsiveness.
