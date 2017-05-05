@@ -4,14 +4,51 @@
 
 <title>Compass</title>
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <link rel="icon" type="image/ico" href="favicon_compass.ico"/>
 
 <!-- Custom Theme files -->
 <link href="css/styleIndex.css" rel="stylesheet" type="text/css" media="all"/>
 <link href="https://fonts.googleapis.com/css?family=Abel" rel="stylesheet">
     <link href="css/bootstrap.min.css" rel="stylesheet">
+<!-- HTML5 Speech Recognition API -->
+<script>
+  function startDictation() {
 
+    if (window.hasOwnProperty('webkitSpeechRecognition')) {
+
+      var recognition = new webkitSpeechRecognition();
+      recognition.continuous = false;
+      recognition.interimResults = false;
+
+      recognition.lang = "en-US";
+      recognition.start();
+      
+      recognition.onresult = function(e) {
+        document.getElementById('transcript').value
+                                 = e.results[0][0].transcript;
+        recognition.stop();
+
+        storeSearch(e.results[0][0].transcript);
+        document.getElementById('labnol').submit();
+        
+      };
+
+      recognition.onerror = function(e) {
+        recognition.stop();
+      }
+
+    }
+  }
+</script>
+<style>
+  .speech {border: 1px solid #DDD; width: 300px; padding: 0; margin: 0}
+  .speech input {border: 0; width: 240px; display: inline-block; height: 30px;}
+
+</style>
 </head>
 <body>
+	
+
 <main>
 	<div class="topbar"></div>
 	<div class="bottombar"></div>
@@ -19,10 +56,25 @@
   	<img src="images/compass.png" alt="compass" href="results.html">
   	<br>
   	<br>
-	<form method="POST" action="results.jsp">
-		<input type="search" name="search" placeholder="Search Cardiff...">
+	<form id="labnol" method="POST" action="results.jsp">
+		
+	<input type="search" name="search" id="transcript" onsearch="storeSearch(this.value)" style="font-family: 'Abel', sans-serif;position: absolute;z-index: 0;" placeholder="Search Cardiff...">
+	<img src="images/microphone.png" class="micIcon" onclick="startDictation()" style="position: relative; width: 20px; height: 20px; margin-top: 11px; margin-right: 15px; float:right;">
+	<img src="images/search.png" class="searchIcon" onclick="document.getElementById('labnol').submit();" style="position: relative; width: 20px; height: 20px; margin-top: 11px; margin-right: 15px; float:right;">
 	</form>
   	</div>
+
+<script>
+  
+  function storeSearch(query){
+    document.cookie = query;
+  }
+    
+</script>
+
 </main>
 </body>
 </html>
+
+
+
