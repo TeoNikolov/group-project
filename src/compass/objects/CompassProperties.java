@@ -11,6 +11,9 @@ import compass.exceptions.PropertyNotFoundException;
 // Class responsible for loading Java properties
 public class CompassProperties {
 
+    /**
+     * Example of using enumerations to handle the type of property (can be expanded on in the future)
+     */
     public enum PropertyType {
         WeatherAPIKey,
     }
@@ -28,7 +31,9 @@ public class CompassProperties {
             hasCompleted = true;
     }
 
-    // Function loads the properties file with location indicated by Constants 'propFileName'
+    /** Function loads the properties file with location indicated by Constants 'propFileName'
+     * @throws PropertiesNotLoadedException
+     */
     private void loadProperties() throws PropertiesNotLoadedException {
         prop = new Properties();
         FileReader reader = null;
@@ -52,6 +57,12 @@ public class CompassProperties {
         }
     }
 
+    /** Attempts to get the value of a specific property type (custom enumeration)
+     * @param prop the property to extract the value of
+     * @return the String representation of the value of the specified property
+     * @throws PropertyNotFoundException
+     * @throws NoPropertyException
+     */
     public String getPropertyValue(PropertyType prop) throws PropertyNotFoundException, NoPropertyException {
         String property = "";
 

@@ -14,8 +14,11 @@ import tk.plogitech.darksky.forecast.ForecastRequestBuilder.Language;
 // Data commonly (if not always) obtained in JSON format
 class Collector {
 
-    // Obtain weather data from Dark Sky services
-    // 'args' currently has no usage. Can be useful to select what data is needed (hourly or not, daily or not, etc.)
+    /** Obtains weather data from Dark Sky services
+     * @return the weather information in JSON format
+     * @throws PropertyNotFoundException
+     * @throws NoPropertyException
+     */
     public static String collectWeatherData() throws PropertyNotFoundException, NoPropertyException {
         ForecastRequest request = new ForecastRequestBuilder()
                 .key(new APIKey(Constants.props.getPropertyValue(PropertyType.WeatherAPIKey)))

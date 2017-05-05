@@ -7,25 +7,18 @@ import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
-import edu.stanford.nlp.trees.Tree;
-import edu.stanford.nlp.trees.TreeCoreAnnotations;
-import edu.stanford.nlp.trees.TreePrint;
-import edu.stanford.nlp.util.ArrayHeap;
 import edu.stanford.nlp.util.CoreMap;
-//import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import us.monoid.json.JSONArray;
-
 import java.io.*;
 import java.util.*;
 
-// Class for Natural Language Processing stuff
 public class NLP {
     private static ArrayList<String> stopwords = new ArrayList<>();
 
     /**
-     * Method accesses local file containing stopwords and loads them to a static list
+     * Method accesses local file containing stopwords and loads them to a static list.
      */
     public static void loadStopwords() {
         File stopwordsFile = new File(Constants.basePath + Constants.stopwordsFilename);
@@ -50,7 +43,7 @@ public class NLP {
 
 
     /**
-     * Method accesses local file containing identifiers of specific schema and loads them to a static list
+     * Method accesses local file containing identifiers of specific schema and loads them to a static list.
      */
     public static void loadIdentifiers() {
         File file = new File(Constants.basePath + Constants.idsFilename);
@@ -126,24 +119,20 @@ public class NLP {
         }
 
         System.setErr(err);
-    }
+        }
 
     /**
      * Primary method responsible for parsing the input and outputting the result of the input in
-     * HTML format relevant to the category
+     * a general format.
      *
-     * @param input generally the Natural Language question asked by the user
-     * @return the output passed back to the client in HTML format
+     * @param input the Natural Language question asked by the user
+     * @return the output passed back to the client in JSON format
      */
     public static String parseInput(String input) {
         Properties props = new Properties();
         Boolean requiresProcessing = true;
 
-        if (Constants.debug) {
-            props.setProperty("annotators", "tokenize, ssplit, pos, lemma, ner, parse");
-        } else {
-            props.setProperty("annotators", "tokenize, ssplit, pos, lemma, ner");
-        }
+        props.setProperty("annotators", "tokenize, ssplit, pos, lemma, ner");  // Set the NLP Properties
 
         StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
         Annotation annotation = new Annotation(input);
@@ -163,26 +152,7 @@ public class NLP {
                 if (!stopwords.contains(word.toLowerCase())) {
                     filteredTokens.add(new CompassToken(word, pos, ne));
                 }
-
-                if (Constants.debug) {
-//                        if (
-//                                pos.equals("NN") ||
-//                                        pos.equals("NNS") ||
-//                                        pos.equals("RB") ||
-//                                        pos.equals("CD") ||
-//                                        pos.equals("WRB") ||
-//                                        pos.equals("WP") ||
-//                                        pos.equals("JJ")) {
-                        System.out.println(word + " / " + pos + " / " + ne);
-//                        }
-                }
             }
-
-//            if (Constants.debug) {
-//                Tree tree = sentence.get(TreeCoreAnnotations.TreeAnnotation.class);
-//                TreePrint printer = new TreePrint("penn");
-//                printer.printTree(tree);
-//            }
         }
 
         String category = obtainCategory(filteredTokens);
@@ -200,7 +170,7 @@ public class NLP {
             }
         }
 
-        data = data.trim().replace(" ", "").toLowerCase();
+        data = data.trim();
 
         try {
             switch (category) {
@@ -305,6 +275,10 @@ public class NLP {
         return resultObj.toJSONString();
     }
 
+    /**
+     * @param tokens the list of tokens to compare against the loaded identifiers
+     * @return the string version of the category extracted from the tokens
+     */
     private static String obtainCategory(ArrayList<CompassToken> tokens) {
         String category = "general";
 

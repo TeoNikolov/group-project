@@ -26,8 +26,10 @@ public class DBQuery {
 		}
 	}
 
-	// Establish connection to DB
-	// -------------------------------------------------------------
+	/** Establish connection to Database
+	 * @param table the table to query
+	 * @param name the value to look for within the table
+	 */
 	public void EstablishDBConnection(String table, String name) {
 
 		try {
@@ -40,15 +42,13 @@ public class DBQuery {
 			// our SQL SELECT query.
 			String query = "SELECT * FROM " + table + " WHERE name = '" + name + "'";
 
-			System.out.println("Table: " + table + " | Name: " + name);
-
 			// create the java statement
 			Statement st = conn.createStatement();
 
-			// execute the query, and get a java resultset
+			// execute the query, and get a java result set
 			ResultSet rs = st.executeQuery(query);
 
-			// iterate through the java resultset
+			// iterate through the java result set
 			while (rs.next()) {
 				id = rs.getInt("id");
 				objName = rs.getString("Name");
@@ -62,6 +62,11 @@ public class DBQuery {
 		}
 	}
 
+	/** Update the specified table with the specified information
+	 * @param table the table to update
+	 * @param contents the value of the key being updated/added
+	 * @param name the key to update/add within the table
+	 */
 	public void updateTable(String table, String contents, String name) {
 		try {
 			// create a java mysql database connection
@@ -71,7 +76,6 @@ public class DBQuery {
 			Connection conn = DriverManager.getConnection(myUrl, "group9.2016", "g4QFghm5Kxm");
 
 			if (lastUpdated == null) {
-
 				String query = " insert into " + table + " (Name, Summary, LastUpdated)" + " values (?, ?, ?)";
 
 				PreparedStatement preparedStmt = conn.prepareStatement(query);
@@ -84,7 +88,6 @@ public class DBQuery {
 				// execute the java preparedstatement
 				preparedStmt.executeUpdate();
 			} else {
-
 				String query = "UPDATE " + table + " SET Name = ?, Summary = ?, lastUpdated = ? WHERE id = ?";
 
 				PreparedStatement preparedStmt = conn.prepareStatement(query);

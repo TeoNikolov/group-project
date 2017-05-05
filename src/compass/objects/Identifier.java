@@ -6,6 +6,10 @@ import java.util.ArrayList;
 public class Identifier {
     public static ArrayList<Identifier> identifiers = new ArrayList<>();
 
+    /** Returns the first Identifier found to match the specified link
+     * @param link the keyword to compare identifiers against and try finding a match
+     * @return if match is found, returns the corresponding identifier. Null otherwise
+     */
     public static Identifier getLinkIdentifier(String link) {
         for (Identifier id : identifiers) {
             for (Pair<String, ArrayList<String>> pair : id.metadata) {
@@ -19,6 +23,11 @@ public class Identifier {
         return null;
     }
 
+    /** Returns the first Identifier found to match the specified link and subcategory
+     * @param subcategory the subcategory to compare identifiers against and try finding a match
+     * @param link the keyword to compare identifiers against and try finding a match
+     * @return if match is found, returns the corresponding identifier. Null otherwise
+     */
     public static Identifier getLinkIdentifier(String subcategory, String link) {
         for (Identifier id : identifiers) {
             for (Pair<String, ArrayList<String>> pair : id.metadata) {
@@ -60,9 +69,7 @@ public class Identifier {
         identifiers.remove(this);
     }
 
-    /**
-     * Method checks if the object's metadata is valid.
-     *
+    /** Method checks if the object's metadata is valid.
      * @param cleanup true if object metadata should be cleaned before validation test
      * @return true if the current identifier has a valid metadata, false otherwise
      */
@@ -86,9 +93,7 @@ public class Identifier {
         }
     }
 
-    /**
-     * Create and add a new empty subcategory to the metadata.
-     *
+    /** Create and add a new empty subcategory to the metadata.
      * @param subcategory the title of the subcategory
      */
     public void addPair(String subcategory) {
@@ -98,18 +103,14 @@ public class Identifier {
         metadata.add(new Pair<>(subcategory, new ArrayList<>()));
     }
 
-    /**
-     * Add a new populated subcategory to the metadata.
-     *
+    /** Add a new populated subcategory to the metadata.
      * @param pair the populated subcategory Pair object to be added
      */
     public void addPair(Pair<String, ArrayList<String>> pair) {
         metadata.add(pair);
     }
 
-    /**
-     * Create and add a new populated subcategory to the metadata.
-     *
+    /** Create and add a new populated subcategory to the metadata.
      * @param subcategory the title of the subcategory
      * @param links a list with all links to be added to the subcategory
      */
@@ -117,9 +118,7 @@ public class Identifier {
         metadata.add(new Pair<>(subcategory, links));
     }
 
-    /**
-     * Add a new link to an existing category.
-     *
+    /** Add a new link to an existing category.
      * @param subcategory the title of the subcategory to add the link to
      * @param link the link to be added to the specified subcategory
      */
@@ -130,9 +129,7 @@ public class Identifier {
         metadata.stream().filter(pair -> pair.getKey().equals(subcategory)).forEach(pair -> pair.getValue().add(link));
     }
 
-    /**
-     * Method checks if the specified link exists within the object's whole metadata.
-     *
+    /** Method checks if the specified link exists within the object's whole metadata.
      * @param link the link to be searched for in the metadata
      * @return true if the specified link has been found in the metadata
      */
@@ -147,9 +144,7 @@ public class Identifier {
         return false;
     }
 
-    /**
-     * Method checks if the specified link exists within the object's whole metadata.
-     *
+    /** Method checks if the specified link exists within the object's whole metadata.
      * @param subcategory the subcategory to search the specified link within
      * @param link the link to be searched for in the specified subcategory in the metadata
      * @return true if the specified link has been found in the specified subcategory in the metadata

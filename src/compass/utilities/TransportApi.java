@@ -9,6 +9,12 @@ public class TransportApi {
 
 	static Resty r = new Resty();
 
+	/** Method handles sub-querying for the transport, adapting to whatever the query requests.
+	 * @param query the query to be used
+	 * @return the Object version of a JSON object returned by the transport API
+	 * @throws IOException
+	 * @throws JSONException
+	 */
 	public static Object transportQuery(String query) throws IOException, JSONException {
 
 		// Return specifically train content

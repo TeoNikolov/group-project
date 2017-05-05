@@ -8,17 +8,19 @@ public class Main {
     private static boolean propertiesLoaded = false;
 
     public static void main(String[] args) {
-        String lol = "This method will not be used ever in its entire life." +
-                "It's here just to please MANIFEST.MF" +
-                "May fix it soon";
+        String placeholder = "This method will not be used ever in its entire life." +
+                "It's here just to discard errors present in MANIFEST.MF when deploying library.";
 
         parseUserQuery("What is the nearest train station?");
     }
 
+    /** Main method that loads relevant data (stopwords/identifiers) and makes the initial call to the NLP module
+     * @param input the Natural Language Input provided by the user
+     * @return the JSON object provided by the APIs present up the call stack
+     */
     public static String parseUserQuery(String input) {
         NLP.loadIdentifiers();
         NLP.loadStopwords();
-
         String res = "There was an error on the server and your input could not be parsed.";
 
         // Try setting up properties
@@ -35,7 +37,9 @@ public class Main {
             res = NLP.parseInput(input);
         }
 
-        System.err.println(res);
+        if (Constants.errdebug) {
+            System.err.println(res);
+        }
 
         return res;
     }
