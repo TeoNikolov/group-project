@@ -1,7 +1,7 @@
 Official GitHub repository for the compass website, including back-end source code.
 
 # Dependency Remarks
-Among the included dependencies within the repo, there is one extra dependency by Standford CoreNLP, which is the "models" dependency, being at about 250MB.
+Among the included dependencies within the repo, there is one extra dependency by Standford CoreNLP, which is the "models" dependency, being at about 250MB. Link the CoreNLP is [here](https://stanfordnlp.github.io/CoreNLP/download.html).
 
 # Overview
 Compass is a centralized, open-domain question-answering system that we have set to be local to Cardiff. Due to DBPedia's nature, currently we include a broad domain for basic questions such as "Who is Gareth Bale?".
